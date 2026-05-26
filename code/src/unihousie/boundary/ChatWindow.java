@@ -48,8 +48,8 @@ public class ChatWindow extends JFrame {
             return;
         }
 
-        setTitle("Chat με " + getOtherUserName());
-        setSize(560, 720);
+        setTitle("💬 " + getOtherUserName());
+        setSize(580, 760);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         initUI();
@@ -57,33 +57,54 @@ public class ChatWindow extends JFrame {
     }
 
     private void initUI() {
-        setLayout(new BorderLayout(0, 10));
+        setLayout(new BorderLayout(0, 0));
 
         JPanel header = new JPanel(new BorderLayout());
-        header.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
+        header.setBackground(new Color(0, 122, 255));
+        header.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+
         JLabel title = new JLabel("💬 " + getOtherUserName(), SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 18));
+        title.setForeground(Color.WHITE);
         header.add(title, BorderLayout.CENTER);
+
         add(header, BorderLayout.NORTH);
 
         chatArea = new JTextArea();
         chatArea.setEditable(false);
-        chatArea.setFont(new Font("Arial", Font.PLAIN, 14));
-        chatArea.setMargin(new Insets(10, 10, 10, 10));
-        add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        chatArea.setFocusable(false);
+        chatArea.setHighlighter(null);
+        chatArea.setFont(new Font("Arial", Font.PLAIN, 15));
+        chatArea.setMargin(new Insets(15, 15, 15, 15));
+        chatArea.setBackground(new Color(245, 247, 250));
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
 
-        JPanel inputPanel = new JPanel(new BorderLayout(8, 0));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(8, 12, 12, 12));
+        JScrollPane scrollPane = new JScrollPane(chatArea);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        add(scrollPane, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel(new BorderLayout(12, 0));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(14, 16, 18, 16));
+        inputPanel.setBackground(Color.WHITE);
 
         inputField = new JTextField();
+        inputField.setFont(new Font("Arial", Font.PLAIN, 16));
+        inputField.setPreferredSize(new Dimension(0, 55));   // ← Μεγέθυνση
+
         JButton sendBtn = new JButton("Αποστολή");
+        sendBtn.setFont(new Font("Arial", Font.BOLD, 15));
+        sendBtn.setBackground(new Color(0, 122, 255));
+        sendBtn.setForeground(Color.BLUE);
+        sendBtn.setFocusPainted(false);
+        sendBtn.setPreferredSize(new Dimension(110, 55));    // ← Μεγέθυνση
+
         sendBtn.addActionListener(e -> sendMessage());
+        inputField.addActionListener(e -> sendMessage());
 
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendBtn, BorderLayout.EAST);
         add(inputPanel, BorderLayout.SOUTH);
-
-        inputField.addActionListener(e -> sendMessage());
     }
 
     private void sendMessage() {
@@ -96,7 +117,7 @@ public class ChatWindow extends JFrame {
     }
 
     private void appendMessage(String message) {
-        chatArea.append(message + "\n");
+        chatArea.append(message + "\n\n");
         chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 
@@ -107,7 +128,7 @@ public class ChatWindow extends JFrame {
         for (Message msg : messages) {
             if (msg.getMatchId() != null && msg.getMatchId().equals(matchId)) {
                 String prefix = msg.getSenderId().equals(currentUserId) ? "Εσύ" : getOtherUserName();
-                chatArea.append(prefix + ": " + msg.getText() + "\n");
+                chatArea.append(prefix + ": " + msg.getText() + "\n\n");
             }
         }
         chatArea.setCaretPosition(chatArea.getDocument().getLength());

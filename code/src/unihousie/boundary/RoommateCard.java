@@ -2,6 +2,7 @@ package unihousie.boundary;
 
 import unihousie.controller.InteractionController;
 import unihousie.entity.LifestyleProfile;
+import unihousie.entity.MutualMatch;
 import unihousie.entity.Student;
 import unihousie.entity.UserSummary;
 import unihousie.mock.DataStore;
@@ -63,11 +64,16 @@ public class RoommateCard extends JFrame {
 
     private void loadAllProfiles() {
         profiles.clear();
+
         for (Student s : DataStore.students) {
             if (s.getUserId().equals(currentUserId)) continue;
 
             LifestyleProfile profile = s.getLifestyleProfile();
             if (profile == null || !profile.isCompleted()) continue;
+
+            if (hasSentLike(currentUserId, s.getUserId()) || hasActiveMatch(currentUserId, s.getUserId())) {
+                continue;
+            }
 
             UserSummary summary = new UserSummary(
                     s.getUserId(),
@@ -79,6 +85,30 @@ public class RoommateCard extends JFrame {
             );
             profiles.add(summary);
         }
+    }
+
+    private boolean hasSentLike(String fromUser, String toUser) {
+        for (MutualMatch m : DataStore.matches) {
+            if (m == null || !"PENDING".equals(m.getStatus())) continue;
+
+            boolean isFromSender = m.getStudentAId().equals(fromUser) && m.getStudentBId().equals(toUser);
+
+            if (isFromSender) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasActiveMatch(String user1, String user2) {
+        for (MutualMatch m : DataStore.matches) {
+            if (m == null || !"ACTIVE".equals(m.getStatus())) continue;
+            if ((m.getStudentAId().equals(user1) && m.getStudentBId().equals(user2)) ||
+                    (m.getStudentAId().equals(user2) && m.getStudentBId().equals(user1))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void loadSingleProfile(String targetId) {
@@ -130,33 +160,38 @@ public class RoommateCard extends JFrame {
         cardPanel.add(bioLabel, BorderLayout.CENTER);
         add(cardPanel, BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel(new GridLayout(1, 2, 25, 0));
-        buttons.setBorder(BorderFactory.createEmptyBorder(10, 40, 25, 40));
+        JPanel buttons = new JPanel();
+        buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 35, 0));
+        buttons.setBorder(BorderFactory.createEmptyBorder(15, 40, 30, 40));
+        buttons.setOpaque(false);
 
         JButton skipBtn = new JButton("⏭ Skip");
-        skipBtn.setFont(new Font("Arial", Font.PLAIN, 16));
+        skipBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        skipBtn.setBackground(Color.RED);
+        skipBtn.setPreferredSize(new Dimension(100, 48));
         skipBtn.addActionListener(e -> nextProfile());
 
         JButton likeBtn = new JButton("❤️ Like");
-        likeBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        likeBtn.setFont(new Font("Arial", Font.BOLD, 18));
         likeBtn.setBackground(new Color(220, 20, 60));
-        likeBtn.setForeground(Color.WHITE);
+        likeBtn.setBackground(Color.GREEN);
+        likeBtn.setPreferredSize(new Dimension(180, 62));
+        likeBtn.setFocusPainted(false);
         likeBtn.addActionListener(e -> handleLike());
 
         if (singleMode) {
             skipBtn.setVisible(false);
         }
 
-        buttons.add(skipBtn);
         buttons.add(likeBtn);
+        buttons.add(skipBtn);
+
         add(buttons, BorderLayout.SOUTH);
     }
 
     private void showCurrentProfile() {
         if (profiles.isEmpty() || currentIndex >= profiles.size()) {
-            JOptionPane.showMessageDialog(this,
-                    "Δεν υπάρχουν άλλα διαθέσιμα προφίλ!",
-                    "Τέλος", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Δεν υπάρχουν άλλα διαθέσιμα προφίλ!", "Τέλος", JOptionPane.INFORMATION_MESSAGE);
             dispose();
             return;
         }
@@ -182,9 +217,7 @@ public class RoommateCard extends JFrame {
         controller.registerLike(currentUserId, target.getUserId());
 
         if (singleMode) {
-            JOptionPane.showMessageDialog(this,
-                    "Like καταχωρήθηκε επιτυχώς!",
-                    "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Like καταχωρήθηκε επιτυχώς!", "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
             currentIndex++;

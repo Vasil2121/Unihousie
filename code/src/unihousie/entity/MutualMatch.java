@@ -13,27 +13,35 @@ public class MutualMatch {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static MutualMatch createNew(String studentAId, String studentBId, String status) {
+    public static MutualMatch createNew(String likerId, String targetId, String status) {
         MutualMatch match = new MutualMatch();
-        if (studentAId.compareTo(studentBId) < 0) {
-            match.setStudentAId(studentAId);
-            match.setStudentBId(studentBId);
+
+        if ("PENDING".equals(status)) {
+            match.setStudentAId(likerId);
+            match.setStudentBId(targetId);
         } else {
-            match.setStudentAId(studentBId);
-            match.setStudentBId(studentAId);
+            if (likerId.compareTo(targetId) < 0) {
+                match.setStudentAId(likerId);
+                match.setStudentBId(targetId);
+            } else {
+                match.setStudentAId(targetId);
+                match.setStudentBId(likerId);
+            }
         }
+
         match.setStatus(status != null ? status : "PENDING");
         match.setCreatedAt(LocalDateTime.now());
         match.setUpdatedAt(LocalDateTime.now());
+
         DataStore.save(match);
         return match;
     }
 
     public static Optional<MutualMatch> findPending(String userId, String targetUserId) {
         return DataStore.findAll(MutualMatch.class).stream()
+                .filter(m -> "PENDING".equals(m.getStatus()))
                 .filter(m -> (m.getStudentAId().equals(userId) && m.getStudentBId().equals(targetUserId)) ||
                         (m.getStudentAId().equals(targetUserId) && m.getStudentBId().equals(userId)))
-                .filter(m -> "PENDING".equals(m.getStatus()))
                 .findFirst();
     }
 
