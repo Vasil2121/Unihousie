@@ -5,7 +5,7 @@ import unihousie.entity.Admin;
 import unihousie.entity.Landlord;
 import unihousie.entity.Student;
 import unihousie.mock.DataStore;
-
+import unihousie.entity.HousingListing;
 import javax.swing.*;
 import java.awt.*;
 import java.util.function.Consumer;
@@ -80,11 +80,18 @@ public class MainWindow extends JFrame {
                 warn("Επίλεξε φοιτητή.");
                 return;
             }
-            Session.setCurrentUser(s.getUserId());   // ← Σημαντικό!
+            Session.setCurrentUser(s.getUserId());
             new ChatWindow().setVisible(true);
         }));
         actions.add(actionButton("UC07 — Search property",       e -> open(new SearchPropertyPage())));
-        actions.add(actionButton("UC08 — Express interest",      e -> open(new PropertyDetailsPage())));
+        actions.add(actionButton("UC08 — Express interest", e -> {
+            if (!DataStore.listings.isEmpty()) {
+                HousingListing demoListing = DataStore.listings.get(0);
+                new PropertyDetailsPage(demoListing).setVisible(true);
+            } else {
+                warn("Δεν υπάρχουν διαθέσιμα ακίνητα για demo.");
+            }
+        }));
         actions.add(actionButton("UC10 — Schedule visit",        e -> open(new ScheduleVisitPage())));
         actions.add(actionButton("UC11 — Submit review",         e -> open(new ReviewPage())));
         actions.add(actionButton("UC09 — Report a user",         e -> open(new ReportUserForm())));
@@ -152,7 +159,6 @@ public class MainWindow extends JFrame {
                 f.setVisible(true);
             }
         } else if (page instanceof JComponent) {
-            // Υποστήριξη για RoommateCard (JPanel)
             JFrame frame = new JFrame("UniHousie — Roommate Card");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.add((JComponent) page);

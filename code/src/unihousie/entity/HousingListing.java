@@ -1,10 +1,12 @@
 package unihousie.entity;
 
+import unihousie.mock.DataStore;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class HousingListing {
+
     public static final String PENDING_APPROVAL = "PENDING_APPROVAL";
     public static final String ACTIVE = "ACTIVE";
     public static final String REJECTED = "REJECTED";
@@ -42,55 +44,60 @@ public class HousingListing {
         this.rent = rent;
         this.availability = availability;
         this.description = description;
-        this.photos = (photos != null) ? photos : new ArrayList<>();
+        this.photos = photos != null ? photos : new ArrayList<>();
         this.status = PENDING_APPROVAL;
         this.averageRating = 0.0;
         this.createdAt = new Date();
     }
 
+    public static HousingListing createNew(String landlordId, String title, String address,
+                                           double rent, String description,
+                                           List<String> amenities, List<String> photos) {
+        String listingId = DataStore.nextId("list_", DataStore.listings.size());
+
+        HousingListing listing = new HousingListing(listingId, landlordId, title, address,
+                "", "APARTMENT", 2, 50, rent, "IMMEDIATE", description, photos);
+
+        DataStore.listings.add(listing);
+        return listing;
+    }
+
+    public static List<HousingListing> findPendingApproval() {
+        List<HousingListing> pending = new ArrayList<>();
+        for (HousingListing l : DataStore.listings) {
+            if (PENDING_APPROVAL.equals(l.status)) {
+                pending.add(l);
+            }
+        }
+        return pending;
+    }
+
+    public static HousingListing getFullData(String listingId) {
+        return DataStore.findListing(listingId);
+    }
+
+    public static List<HousingListing> findMatchingActive(String location, double maxPrice, int minRooms) {
+        List<HousingListing> results = new ArrayList<>();
+        for (HousingListing l : DataStore.listings) {
+            if (ACTIVE.equals(l.status) &&
+                    l.rent <= maxPrice &&
+                    l.rooms >= minRooms) {
+                results.add(l);
+            }
+        }
+        return results;
+    }
+
     public String getListingId() { return listingId; }
     public String getLandlordId() { return landlordId; }
-
     public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
     public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-    public String getArea() { return area; }
-    public void setArea(String area) { this.area = area; }
-
     public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
     public int getRooms() { return rooms; }
-    public void setRooms(int rooms) { this.rooms = rooms; }
-
     public double getSqm() { return sqm; }
-    public void setSqm(double sqm) { this.sqm = sqm; }
-
     public double getRent() { return rent; }
-    public void setRent(double rent) { this.rent = rent; }
-
-    public String getAvailability() { return availability; }
-    public void setAvailability(String availability) { this.availability = availability; }
-
     public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
     public List<String> getPhotos() { return photos; }
-    public void setPhotos(List<String> photos) { this.photos = photos; }
-
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
-
-    public boolean isActive() { return ACTIVE.equals(status); }
-    public boolean isAvailable() { return ACTIVE.equals(status); }
-
-    public double getAverageRating() { return averageRating; }
-    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
-
-    public Date getCreatedAt() { return createdAt; }
-
-    public void save() {  }
 }

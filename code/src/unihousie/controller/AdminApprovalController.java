@@ -1,37 +1,40 @@
 package unihousie.controller;
 
 import unihousie.entity.HousingListing;
-
+import unihousie.mock.DataStore;
 import java.util.List;
 
 public class AdminApprovalController {
 
     public List<HousingListing> getPendingListings() {
-
-        throw new UnsupportedOperationException("UC06 Phase 2 — pending implementation by Member 5");
+        return HousingListing.findPendingApproval();
     }
 
-    public String getListingDetails(String listingId) {
-
-        throw new UnsupportedOperationException("UC06 Phase 2 — pending implementation by Member 5");
+    public HousingListing getListingDetails(String listingId) {
+        return HousingListing.getFullData(listingId);
     }
 
     public void processApproval(String listingId) {
-
-        throw new UnsupportedOperationException("UC06 Phase 2 — pending implementation by Member 5");
+        HousingListing listing = HousingListing.getFullData(listingId);
+        if (listing != null) {
+            listing.setStatus(HousingListing.ACTIVE);
+            System.out.println("✅ Η αγγελία " + listingId + " εγκρίθηκε και είναι πλέον ACTIVE.");
+        }
     }
 
     public void processRejection(String listingId, String rejectionReason) {
-
-        throw new UnsupportedOperationException("UC06 Phase 2 — pending implementation by Member 5");
+        HousingListing listing = HousingListing.getFullData(listingId);
+        if (listing != null) {
+            listing.setStatus(HousingListing.REJECTED);
+            System.out.println("❌ Η αγγελία " + listingId + " απορρίφθηκε. Λόγος: " + rejectionReason);
+        }
     }
 
-    public HousingListing renderPropertyDetailsPage(HousingListing listing) {
-
-        return listing;
+    public void notifyApprovalSuccess() {
+        System.out.println("✅ Επιτυχής έγκριση αγγελίας.");
     }
 
-    public void notifyApprovalSuccess() {  }
-
-    public void notifyRejectionProcessed() {  }
+    public void notifyRejectionProcessed() {
+        System.out.println("✅ Απόρριψη αγγελίας καταχωρήθηκε.");
+    }
 }
