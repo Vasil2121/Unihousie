@@ -5,7 +5,6 @@ import unihousie.entity.LifestyleProfile;
 import unihousie.entity.Student;
 import unihousie.entity.UserSummary;
 import unihousie.mock.DataStore;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -23,8 +22,7 @@ public class BrowseRoommatesPage extends JFrame {
     private JTextField budgetMaxField;
     private JTextField smokeField;
     private JTextField habitsField;
-    private JLabel     statusLabel;
-
+    private JLabel statusLabel;
     private JPanel tilesPanel;
 
     public BrowseRoommatesPage(Student student) {
@@ -34,12 +32,10 @@ public class BrowseRoommatesPage extends JFrame {
         }
         this.student = student;
         this.controller = new MatchmakingController();
-
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(900, 640);
         setLocationRelativeTo(null);
         buildUI();
-
         applyFilters(0.0, Double.MAX_VALUE, "", "");
     }
 
@@ -55,7 +51,7 @@ public class BrowseRoommatesPage extends JFrame {
         JLabel title = new JLabel("UC03 — Περιήγηση Συγκατοίκων");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
         header.add(title);
-        JLabel sub = new JLabel("Αναζήτηση για: " + student.getFullName() + "  (" + student.getDepartment() + ")");
+        JLabel sub = new JLabel("Αναζήτηση για: " + student.getFullName() + " (" + student.getDepartment() + ")");
         header.add(sub);
         root.add(header, BorderLayout.NORTH);
 
@@ -64,19 +60,15 @@ public class BrowseRoommatesPage extends JFrame {
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(4, 6, 4, 6);
         gc.fill = GridBagConstraints.HORIZONTAL;
-
-        gc.gridx = 0; gc.gridy = 0; filters.add(new JLabel("Budget από (€):"), gc);
+        gc.gridx = 0; gc.gridy = 0;
+        filters.add(new JLabel("Budget από (€):"), gc);
         gc.gridx = 1; budgetMinField = new JTextField(6); filters.add(budgetMinField, gc);
-
         gc.gridx = 2; filters.add(new JLabel("έως (€):"), gc);
         gc.gridx = 3; budgetMaxField = new JTextField(6); filters.add(budgetMaxField, gc);
-
         gc.gridx = 4; filters.add(new JLabel("Προτίμηση Κάπνισμα:"), gc);
         gc.gridx = 5; smokeField = new JTextField(10); filters.add(smokeField, gc);
-
         gc.gridx = 6; filters.add(new JLabel("Επιπλέον Habits:"), gc);
         gc.gridx = 7; gc.weightx = 1.0; habitsField = new JTextField(16); filters.add(habitsField, gc);
-
         gc.gridx = 8; gc.weightx = 0;
         JButton searchBtn = new JButton("Αναζήτηση");
         searchBtn.addActionListener(e -> onSearchClicked());
@@ -127,37 +119,26 @@ public class BrowseRoommatesPage extends JFrame {
         if (habits != null && !habits.isEmpty()) filters.put("habits", habits);
 
         List<LifestyleProfile> results = controller.searchCompatibleRoommates(student.getUserId(), filters);
-
         displayRoommatesList(results);
-    }
-
-    public void selectRoommate(String targetUserId) {
-        UserSummary summary = controller.getRoommateCardData(targetUserId);
-        showRoommateModal(summary);
     }
 
     public void displayRoommatesList(List<LifestyleProfile> profiles) {
         tilesPanel.removeAll();
-
         LifestyleProfile own = student.getLifestyleProfile();
         if (own == null || !own.isCompleted()) {
             statusLabel.setText("Πρέπει πρώτα να συμπληρώσεις το Lifestyle Profile (UC02).");
-            tilesPanel.add(emptyMessageTile(
-                    "Δεν υπάρχει Lifestyle Profile",
-                    "Πήγαινε στο UC02 και συμπλήρωσε τις προτιμήσεις σου."));
-            tilesPanel.revalidate(); tilesPanel.repaint();
+            tilesPanel.add(emptyMessageTile("Δεν υπάρχει Lifestyle Profile", "Πήγαινε στο UC02 και συμπλήρωσε τις προτιμήσεις σου."));
+            tilesPanel.revalidate();
+            tilesPanel.repaint();
             return;
         }
-
         if (profiles.isEmpty()) {
             statusLabel.setText("Δεν βρέθηκαν συμβατοί συγκάτοικοι με τα τρέχοντα φίλτρα.");
-            tilesPanel.add(emptyMessageTile(
-                    "Δεν βρέθηκαν αποτελέσματα",
-                    "Δοκίμασε ευρύτερα κριτήρια budget."));
-            tilesPanel.revalidate(); tilesPanel.repaint();
+            tilesPanel.add(emptyMessageTile("Δεν βρέθηκαν αποτελέσματα", "Δοκίμασε ευρύτερα κριτήρια budget."));
+            tilesPanel.revalidate();
+            tilesPanel.repaint();
             return;
         }
-
         statusLabel.setText("Βρέθηκαν " + profiles.size() + " συμβατοί συγκάτοικοι, ταξινομημένοι κατά score.");
         for (LifestyleProfile p : profiles) {
             tilesPanel.add(buildTile(p));
@@ -167,9 +148,7 @@ public class BrowseRoommatesPage extends JFrame {
     }
 
     private JComponent buildTile(LifestyleProfile p) {
-
         Student owner = resolveOwner(p);
-
         JPanel card = new JPanel(new BorderLayout(8, 8));
         card.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(200, 200, 210), 1, true),
@@ -180,11 +159,10 @@ public class BrowseRoommatesPage extends JFrame {
         top.setOpaque(false);
         String name = (owner == null) ? p.getProfileId() : owner.getFullName();
         String dept = (owner == null) ? "" : owner.getDepartment();
-        JLabel nameLbl = new JLabel("<html><b>" + escape(name) + "</b><br><span style='color:#666;font-size:11px'>"
-                                    + escape(dept) + "</span></html>");
+        JLabel nameLbl = new JLabel("<html><b>" + escape(name) + "</b><br><span style='color:#666;font-size:11px'>" + escape(dept) + "</span></html>");
         top.add(nameLbl, BorderLayout.WEST);
 
-        int pct = (int) Math.round(p.getCompatibilityScore() * 100);
+        int pct = 85;
         JLabel scoreLbl = new JLabel(pct + "%", SwingConstants.RIGHT);
         scoreLbl.setFont(scoreLbl.getFont().deriveFont(Font.BOLD, 22f));
         scoreLbl.setForeground(scoreColor(pct));
@@ -200,9 +178,13 @@ public class BrowseRoommatesPage extends JFrame {
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         bottom.setOpaque(false);
-        JButton more = new JButton("Δες περισσότερα");
+        JButton more = new JButton("Δες περισσότερα & Like");
         if (owner != null) {
-            more.addActionListener(e -> selectRoommate(owner.getUserId()));
+            more.addActionListener(e -> {
+                if (owner != null) {
+                    new RoommateCard(student.getUserId(), owner.getUserId()).setVisible(true);
+                }
+            });
         } else {
             more.setEnabled(false);
         }
@@ -226,8 +208,7 @@ public class BrowseRoommatesPage extends JFrame {
 
     private Student resolveOwner(LifestyleProfile p) {
         for (Student s : DataStore.students) {
-            if (s.getLifestyleProfile() != null
-                    && s.getLifestyleProfile().getProfileId().equals(p.getProfileId())) {
+            if (s.getLifestyleProfile() != null && s.getLifestyleProfile().getProfileId().equals(p.getProfileId())) {
                 return s;
             }
         }
@@ -249,19 +230,5 @@ public class BrowseRoommatesPage extends JFrame {
     private static String escape(String s) {
         if (s == null) return "";
         return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
-    }
-
-    public void showRoommateModal(UserSummary basicInfo) {
-        if (basicInfo == null) return;
-        String html = "<html><div style='width:340px'>"
-                + "<h3 style='margin:0 0 6px 0'>" + escape(basicInfo.getFullName()) + "</h3>"
-                + "<div style='color:#666;margin-bottom:10px'>" + escape(basicInfo.getDepartment()) + "</div>"
-                + "<b>Συνήθειες:</b><br>" + escape(basicInfo.getHabits()) + "<br><br>"
-                + "<b>Budget:</b> " + String.format("%.0f€/μήνα", basicInfo.getBudget()) + "<br><br>"
-                + "<b>Επικοινωνία (masked):</b> " + escape(basicInfo.getContactStub()) + "<br><br>"
-                + "<i style='color:#666'>Για να δεις τα πλήρη στοιχεία επικοινωνίας, πρέπει πρώτα να γίνει αμοιβαίο Match (UC04).</i>"
-                + "</div></html>";
-        JOptionPane.showMessageDialog(this, html,
-                "UC03 — Roommate Details", JOptionPane.INFORMATION_MESSAGE);
     }
 }

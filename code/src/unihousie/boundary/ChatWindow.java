@@ -1,32 +1,160 @@
 package unihousie.boundary;
 
+import unihousie.Session;
+import unihousie.controller.ChatController;
 import unihousie.entity.Message;
+import unihousie.entity.MutualMatch;
+import unihousie.entity.Student;
+import unihousie.mock.DataStore;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 
 public class ChatWindow extends JFrame {
 
+    private String matchId;
+    private final String currentUserId;
+    private String otherUserId;
+    private final ChatController controller;
+
+    private JTextArea chatArea;
+    private JTextField inputField;
+
+    public ChatWindow(String matchId, String currentUserId, String otherUserId) {
+        this.matchId = matchId;
+        this.currentUserId = currentUserId;
+        this.otherUserId = otherUserId;
+        this.controller = new ChatController();
+        initChatWindow();
+    }
+
+    public ChatWindow(String matchId, String otherUserId) {
+        this(matchId, Session.getCurrentUserId(), otherUserId);
+    }
+
     public ChatWindow() {
-        super("UC05 — Chat");
+        this.currentUserId = Session.getCurrentUserId();
+        this.controller = new ChatController();
+        showMatchSelectionDialog();
+    }
+
+    private void initChatWindow() {
+        if (!MutualMatch.validateActiveMatch(matchId, currentUserId)) {
+            JOptionPane.showMessageDialog(this,
+                    "Δεν έχεις ενεργό match με αυτόν τον χρήστη!",
+                    "Σφάλμα", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
+        }
+
+        setTitle("Chat με " + getOtherUserName());
+        setSize(560, 720);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(560, 640);
         setLocationRelativeTo(null);
-
+        initUI();
+        loadChatHistory();
     }
 
-    public void display() {
-        setVisible(true);
+    private void initUI() {
+        setLayout(new BorderLayout(0, 10));
+
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
+        JLabel title = new JLabel("💬 " + getOtherUserName(), SwingConstants.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 18));
+        header.add(title, BorderLayout.CENTER);
+        add(header, BorderLayout.NORTH);
+
+        chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chatArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        chatArea.setMargin(new Insets(10, 10, 10, 10));
+        add(new JScrollPane(chatArea), BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel(new BorderLayout(8, 0));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(8, 12, 12, 12));
+
+        inputField = new JTextField();
+        JButton sendBtn = new JButton("Αποστολή");
+        sendBtn.addActionListener(e -> sendMessage());
+
+        inputPanel.add(inputField, BorderLayout.CENTER);
+        inputPanel.add(sendBtn, BorderLayout.EAST);
+        add(inputPanel, BorderLayout.SOUTH);
+
+        inputField.addActionListener(e -> sendMessage());
     }
 
-    public void typeAndSendMessage(String matchId, String messageText) {
+    private void sendMessage() {
+        String text = inputField.getText().trim();
+        if (text.isEmpty()) return;
 
+        controller.sendMessage(currentUserId, matchId, text);
+        appendMessage("Εσύ: " + text);
+        inputField.setText("");
     }
 
-    public void appendMessageToSenderScreen(Message message) {
-
+    private void appendMessage(String message) {
+        chatArea.append(message + "\n");
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
     }
 
-    public void updateChatUI() {
+    private void loadChatHistory() {
+        chatArea.setText("");
 
+        List<Message> messages = DataStore.findAll(Message.class);
+        for (Message msg : messages) {
+            if (msg.getMatchId() != null && msg.getMatchId().equals(matchId)) {
+                String prefix = msg.getSenderId().equals(currentUserId) ? "Εσύ" : getOtherUserName();
+                chatArea.append(prefix + ": " + msg.getText() + "\n");
+            }
+        }
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
+    }
+
+    private String getOtherUserName() {
+        Student s = DataStore.findStudent(otherUserId);
+        return s != null ? s.getFullName() : otherUserId;
+    }
+
+    private void showMatchSelectionDialog() {
+        List<MutualMatch> activeMatches = DataStore.getActiveMatchesForUser(currentUserId);
+
+        if (activeMatches.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Δεν έχεις ακόμα ενεργά matches.\n\nΚάνε Like σε κάποιον από το UC04!",
+                    "UC05 — Chat", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+            return;
+        }
+
+        String[] options = new String[activeMatches.size()];
+        for (int i = 0; i < activeMatches.size(); i++) {
+            MutualMatch m = activeMatches.get(i);
+            String otherId = m.getStudentAId().equals(currentUserId) ? m.getStudentBId() : m.getStudentAId();
+            Student other = DataStore.findStudent(otherId);
+            options[i] = other != null ? other.getFullName() : otherId;
+        }
+
+        String selected = (String) JOptionPane.showInputDialog(this,
+                "Επιλέξτε με ποιον θέλετε να συνομιλήσετε:",
+                "UC05 — Επιλογή Συνομιλίας",
+                JOptionPane.QUESTION_MESSAGE,
+                null, options, options[0]);
+
+        if (selected != null) {
+            for (int i = 0; i < activeMatches.size(); i++) {
+                if (options[i].equals(selected)) {
+                    MutualMatch m = activeMatches.get(i);
+                    this.matchId = m.getMatchId();
+                    this.otherUserId = m.getStudentAId().equals(currentUserId) ? m.getStudentBId() : m.getStudentAId();
+                    initChatWindow();
+                    return;
+                }
+            }
+        } else {
+            dispose();
+        }
     }
 }

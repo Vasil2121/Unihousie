@@ -1,15 +1,19 @@
 package unihousie.controller;
 
 import unihousie.entity.Message;
+import unihousie.entity.MutualMatch;
 
 public class ChatController {
 
-    public Message sendMessage(String senderId, String matchId, String messageText) {
+    public void sendMessage(String senderId, String matchId, String messageText) {
+        if (messageText == null || messageText.trim().isEmpty()) return;
 
-        throw new UnsupportedOperationException("UC05 — pending implementation by Member 3");
-    }
+        if (!MutualMatch.validateActiveMatch(matchId, senderId)) {
+            System.out.println("⚠ Δεν έχεις ενεργό match!");
+            return;
+        }
 
-    public void broadcastToRecipientChannel(String recipientId, Message message) {
-
+        Message.createNew(matchId, senderId, messageText.trim());
+        System.out.println("📨 Μήνυμα από " + senderId + " στο match " + matchId);
     }
 }

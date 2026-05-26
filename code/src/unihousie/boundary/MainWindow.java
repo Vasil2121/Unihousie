@@ -1,5 +1,6 @@
 package unihousie.boundary;
 
+import unihousie.Session;
 import unihousie.entity.Admin;
 import unihousie.entity.Landlord;
 import unihousie.entity.Student;
@@ -64,8 +65,24 @@ public class MainWindow extends JFrame {
             hookRefresh.accept(p);
             p.display();
         }));
-        actions.add(actionButton("UC04 — Roommate card / Like",  e -> open(new RoommateCard())));
-        actions.add(actionButton("UC05 — Chat window",           e -> open(new ChatWindow())));
+        actions.add(actionButton("UC04 — Roommate card / Like", e -> {
+            Student s = list.getSelectedValue();
+            if (s == null) {
+                warn("Επίλεξε φοιτητή από τη λίστα.");
+                return;
+            }
+            RoommateCard card = new RoommateCard(s.getUserId());
+            open(card);
+        }));
+        actions.add(actionButton("UC05 — Chat window", e -> {
+            Student s = list.getSelectedValue();
+            if (s == null) {
+                warn("Επίλεξε φοιτητή.");
+                return;
+            }
+            Session.setCurrentUser(s.getUserId());   // ← Σημαντικό!
+            new ChatWindow().setVisible(true);
+        }));
         actions.add(actionButton("UC07 — Search property",       e -> open(new SearchPropertyPage())));
         actions.add(actionButton("UC08 — Express interest",      e -> open(new PropertyDetailsPage())));
         actions.add(actionButton("UC10 — Schedule visit",        e -> open(new ScheduleVisitPage())));
@@ -126,10 +143,23 @@ public class MainWindow extends JFrame {
         return b;
     }
 
-    private void open(JFrame page) {
-
-        if (page instanceof VerificationPage) ((VerificationPage) page).display();
-        else page.setVisible(true);
+    private void open(Object page) {
+        if (page instanceof JFrame) {
+            JFrame f = (JFrame) page;
+            if (f instanceof VerificationPage) {
+                ((VerificationPage) f).display();
+            } else {
+                f.setVisible(true);
+            }
+        } else if (page instanceof JComponent) {
+            // Υποστήριξη για RoommateCard (JPanel)
+            JFrame frame = new JFrame("UniHousie — Roommate Card");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.add((JComponent) page);
+            frame.setSize(800, 600);
+            frame.setLocationRelativeTo(this);
+            frame.setVisible(true);
+        }
     }
 
     private void warn(String msg) {
