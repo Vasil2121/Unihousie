@@ -6,7 +6,6 @@ import unihousie.entity.MutualMatch;
 import unihousie.entity.Student;
 import unihousie.entity.UserSummary;
 import unihousie.mock.DataStore;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,13 +18,13 @@ public class RoommateCard extends JFrame {
     private final String targetUserId;
     private final List<UserSummary> profiles = new ArrayList<>();
     private int currentIndex = 0;
-
     private boolean singleMode = false;
 
     private JPanel cardPanel;
     private JLabel nameLabel;
     private JLabel bioLabel;
     private JLabel statusLabel;
+
 
     public RoommateCard(String currentUserId, String targetUserId) {
         super("UC04 — Roommate Card");
@@ -35,7 +34,7 @@ public class RoommateCard extends JFrame {
         this.singleMode = true;
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 650);
+        setSize(500, 680);
         setLocationRelativeTo(null);
 
         loadSingleProfile(targetUserId);
@@ -50,7 +49,7 @@ public class RoommateCard extends JFrame {
         this.controller = new InteractionController();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(500, 650);
+        setSize(500, 680);
         setLocationRelativeTo(null);
 
         loadAllProfiles();
@@ -62,9 +61,9 @@ public class RoommateCard extends JFrame {
         this("stud_1");
     }
 
+
     private void loadAllProfiles() {
         profiles.clear();
-
         for (Student s : DataStore.students) {
             if (s.getUserId().equals(currentUserId)) continue;
 
@@ -90,10 +89,7 @@ public class RoommateCard extends JFrame {
     private boolean hasSentLike(String fromUser, String toUser) {
         for (MutualMatch m : DataStore.matches) {
             if (m == null || !"PENDING".equals(m.getStatus())) continue;
-
-            boolean isFromSender = m.getStudentAId().equals(fromUser) && m.getStudentBId().equals(toUser);
-
-            if (isFromSender) {
+            if (m.getStudentAId().equals(fromUser) && m.getStudentBId().equals(toUser)) {
                 return true;
             }
         }
@@ -133,16 +129,19 @@ public class RoommateCard extends JFrame {
     private void buildUI() {
         setLayout(new BorderLayout(0, 10));
 
+        // Header
         JPanel header = new JPanel(new BorderLayout());
         header.setBorder(BorderFactory.createEmptyBorder(15, 15, 10, 15));
         String titleText = singleMode ? "UC04 — Roommate Card" : "UC04 — Browse & Match";
         JLabel title = new JLabel(titleText);
         title.setFont(new Font("Arial", Font.BOLD, 18));
         header.add(title, BorderLayout.WEST);
+
         statusLabel = new JLabel(" ");
         header.add(statusLabel, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
+        // Card Panel
         cardPanel = new JPanel(new BorderLayout(10, 10));
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(70, 130, 180), 3, true),
@@ -160,38 +159,50 @@ public class RoommateCard extends JFrame {
         cardPanel.add(bioLabel, BorderLayout.CENTER);
         add(cardPanel, BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel();
-        buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 35, 0));
-        buttons.setBorder(BorderFactory.createEmptyBorder(15, 40, 30, 40));
-        buttons.setOpaque(false);
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 3, 15, 0));
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(15, 30, 30, 30));
+        buttonsPanel.setOpaque(false);
+
+        JButton reportBtn = new JButton("🚩 Report");
+        reportBtn.setFont(new Font("Arial", Font.PLAIN, 14));
+        reportBtn.setBackground(Color.BLACK);
+        reportBtn.setForeground(Color.BLACK);
+        reportBtn.setPreferredSize(new Dimension(110, 50));
+        reportBtn.setToolTipText("Καταγγελία χρήστη");
+        reportBtn.addActionListener(e -> handleReport());
+
+        JButton likeBtn = new JButton("❤️ Like");
+        likeBtn.setFont(new Font("Arial", Font.BOLD, 18));
+        likeBtn.setBackground(Color.GREEN);
+        likeBtn.setForeground(Color.BLACK);
+        likeBtn.setPreferredSize(new Dimension(170, 62));
+        likeBtn.setFocusPainted(false);
+        likeBtn.addActionListener(e -> handleLike());
 
         JButton skipBtn = new JButton("⏭ Skip");
         skipBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         skipBtn.setBackground(Color.RED);
-        skipBtn.setPreferredSize(new Dimension(100, 48));
+        skipBtn.setForeground(Color.BLACK);
+        skipBtn.setPreferredSize(new Dimension(110, 50));
         skipBtn.addActionListener(e -> nextProfile());
-
-        JButton likeBtn = new JButton("❤️ Like");
-        likeBtn.setFont(new Font("Arial", Font.BOLD, 18));
-        likeBtn.setBackground(new Color(220, 20, 60));
-        likeBtn.setBackground(Color.GREEN);
-        likeBtn.setPreferredSize(new Dimension(180, 62));
-        likeBtn.setFocusPainted(false);
-        likeBtn.addActionListener(e -> handleLike());
 
         if (singleMode) {
             skipBtn.setVisible(false);
         }
 
-        buttons.add(likeBtn);
-        buttons.add(skipBtn);
+        buttonsPanel.add(reportBtn);
+        buttonsPanel.add(likeBtn);
+        buttonsPanel.add(skipBtn);
 
-        add(buttons, BorderLayout.SOUTH);
+        add(buttonsPanel, BorderLayout.SOUTH);
     }
+
 
     private void showCurrentProfile() {
         if (profiles.isEmpty() || currentIndex >= profiles.size()) {
-            JOptionPane.showMessageDialog(this, "Δεν υπάρχουν άλλα διαθέσιμα προφίλ!", "Τέλος", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Δεν υπάρχουν άλλα διαθέσιμα προφίλ!",
+                    "Τέλος", JOptionPane.INFORMATION_MESSAGE);
             dispose();
             return;
         }
@@ -201,7 +212,8 @@ public class RoommateCard extends JFrame {
 
         String info = "<html><b>Τμήμα:</b> " + current.getDepartment() +
                 "<br><br><b>Συνήθειες:</b><br>" + current.getHabits() +
-                "<br><br><b>Budget:</b> " + String.format("%.0f €/μήνα", current.getBudget()) + "</html>";
+                "<br><br><b>Budget:</b> " + String.format("%.0f €/μήνα", current.getBudget()) +
+                "</html>";
 
         bioLabel.setText(info);
         statusLabel.setText("Προφίλ " + (currentIndex + 1) + " / " + profiles.size());
@@ -210,6 +222,7 @@ public class RoommateCard extends JFrame {
         repaint();
     }
 
+
     private void handleLike() {
         if (currentIndex >= profiles.size()) return;
 
@@ -217,7 +230,8 @@ public class RoommateCard extends JFrame {
         controller.registerLike(currentUserId, target.getUserId());
 
         if (singleMode) {
-            JOptionPane.showMessageDialog(this, "Like καταχωρήθηκε επιτυχώς!", "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Like καταχωρήθηκε επιτυχώς!",
+                    "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } else {
             currentIndex++;
@@ -228,5 +242,12 @@ public class RoommateCard extends JFrame {
     private void nextProfile() {
         currentIndex++;
         SwingUtilities.invokeLater(this::showCurrentProfile);
+    }
+
+    private void handleReport() {
+        if (currentIndex >= profiles.size()) return;
+        UserSummary target = profiles.get(currentIndex);
+        new ReportUserForm(currentUserId, target.getUserId(), unihousie.entity.Report.TARGET_STUDENT)
+                .setVisible(true);
     }
 }
