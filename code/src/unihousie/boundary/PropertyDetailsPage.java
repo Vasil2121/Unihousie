@@ -42,19 +42,19 @@ public class PropertyDetailsPage extends JFrame {
         interestBtn.setFont(new Font("Arial", Font.BOLD, 14));
         interestBtn.addActionListener(e -> clickExpressInterest());
 
-        JButton scheduleBtn = new JButton("📅 Προγραμματισμός Επίσκεψης");
+        JButton scheduleBtn = new JButton(" Προγραμματισμός Επίσκεψης");
         scheduleBtn.setFont(new Font("Arial", Font.BOLD, 14));
         scheduleBtn.addActionListener(e -> {
             new ScheduleVisitPage(listing, Session.getCurrentUserId()).setVisible(true);
         });
 
-        JButton reviewBtn = new JButton("⭐ Αξιολόγηση");
+        JButton reviewBtn = new JButton(" Αξιολόγηση");
         reviewBtn.setFont(new Font("Arial", Font.BOLD, 14));
         reviewBtn.addActionListener(e -> {
             new ReviewPage(listing, Session.getCurrentUserId()).setVisible(true);
         });
 
-        JButton reportBtn = new JButton("🚩 Καταγγελία Αγγελίας");
+        JButton reportBtn = new JButton(" Καταγγελία Αγγελίας");
         reportBtn.addActionListener(e -> {
             new ReportUserForm(
                     Session.getCurrentUserId(),
@@ -89,7 +89,7 @@ public class PropertyDetailsPage extends JFrame {
 
     public void showLandlordContactDetails(ContactInfo contactInfo) {
         JOptionPane.showMessageDialog(this,
-                "✅ Ενδιαφέρον εκδηλώθηκε επιτυχώς!\n\n" +
+                " Ενδιαφέρον εκδηλώθηκε επιτυχώς!\n\n" +
                         "Στοιχεία Ιδιοκτήτη:\n" +
                         "Όνομα: " + contactInfo.getFullName() + "\n" +
                         "Email: " + contactInfo.getEmail() + "\n" +

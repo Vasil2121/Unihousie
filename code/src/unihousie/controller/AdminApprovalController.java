@@ -18,7 +18,7 @@ public class AdminApprovalController {
         HousingListing listing = HousingListing.getFullData(listingId);
         if (listing != null) {
             listing.setStatus(HousingListing.ACTIVE);
-            System.out.println("✅ Η αγγελία " + listingId + " εγκρίθηκε και είναι πλέον ACTIVE.");
+            System.out.println(" Η αγγελία " + listingId + " εγκρίθηκε και είναι πλέον ACTIVE.");
         }
     }
 
@@ -26,15 +26,15 @@ public class AdminApprovalController {
         HousingListing listing = HousingListing.getFullData(listingId);
         if (listing != null) {
             listing.setStatus(HousingListing.REJECTED);
-            System.out.println("❌ Η αγγελία " + listingId + " απορρίφθηκε. Λόγος: " + rejectionReason);
+            System.out.println(" Η αγγελία " + listingId + " απορρίφθηκε. Λόγος: " + rejectionReason);
         }
     }
 
     public void notifyApprovalSuccess() {
-        System.out.println("✅ Επιτυχής έγκριση αγγελίας.");
+        System.out.println(" Επιτυχής έγκριση αγγελίας.");
     }
 
     public void notifyRejectionProcessed() {
-        System.out.println("✅ Απόρριψη αγγελίας καταχωρήθηκε.");
+        System.out.println(" Απόρριψη αγγελίας καταχωρήθηκε.");
     }
 }

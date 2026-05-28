@@ -131,7 +131,6 @@ public class RoommateCard extends JFrame {
     private void buildUI() {
         setLayout(new BorderLayout(0, 10));
 
-        // Header
         JPanel header = new JPanel(new BorderLayout());
         header.setBorder(BorderFactory.createEmptyBorder(15, 15, 10, 15));
         String titleText = singleMode ? "UC04 — Roommate Card" : "UC04 — Browse & Match";
@@ -143,7 +142,6 @@ public class RoommateCard extends JFrame {
         header.add(statusLabel, BorderLayout.EAST);
         add(header, BorderLayout.NORTH);
 
-        // Card Panel
         cardPanel = new JPanel(new BorderLayout(10, 10));
         cardPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(70, 130, 180), 3, true),
@@ -165,7 +163,7 @@ public class RoommateCard extends JFrame {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder(15, 30, 30, 30));
         buttonsPanel.setOpaque(false);
 
-        JButton reportBtn = new JButton("🚩 Report");
+        JButton reportBtn = new JButton(" Report");
         reportBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         reportBtn.setBackground(Color.BLACK);
         reportBtn.setForeground(Color.BLACK);
@@ -173,7 +171,7 @@ public class RoommateCard extends JFrame {
         reportBtn.setToolTipText("Καταγγελία χρήστη");
         reportBtn.addActionListener(e -> handleReport());
 
-        JButton likeBtn = new JButton("❤️ Like");
+        JButton likeBtn = new JButton(" Like");
         likeBtn.setFont(new Font("Arial", Font.BOLD, 18));
         likeBtn.setBackground(Color.GREEN);
         likeBtn.setForeground(Color.BLACK);
@@ -181,7 +179,7 @@ public class RoommateCard extends JFrame {
         likeBtn.setFocusPainted(false);
         likeBtn.addActionListener(e -> handleLike());
 
-        JButton skipBtn = new JButton("⏭ Skip");
+        JButton skipBtn = new JButton(" Skip");
         skipBtn.setFont(new Font("Arial", Font.PLAIN, 14));
         skipBtn.setBackground(Color.RED);
         skipBtn.setForeground(Color.BLACK);

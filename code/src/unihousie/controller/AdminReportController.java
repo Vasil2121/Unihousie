@@ -100,6 +100,6 @@ public class AdminReportController {
     }
 
     public void notifyResolutionSuccess() {
-        System.out.println("✅ Η επίλυση καταγγελίας ολοκληρώθηκε επιτυχώς.");
+        System.out.println(" Η επίλυση καταγγελίας ολοκληρώθηκε επιτυχώς.");
     }
 }

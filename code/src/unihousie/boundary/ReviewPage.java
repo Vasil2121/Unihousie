@@ -95,7 +95,7 @@ public class ReviewPage extends JFrame {
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton cancelBtn = new JButton("Ακύρωση");
         cancelBtn.addActionListener(e -> dispose());
-        JButton submitBtn = new JButton("⭐ Υποβολή Αξιολόγησης");
+        JButton submitBtn = new JButton(" Υποβολή Αξιολόγησης");
         submitBtn.setFont(submitBtn.getFont().deriveFont(Font.BOLD));
         submitBtn.addActionListener(e -> onSubmitClicked());
         actions.add(cancelBtn);

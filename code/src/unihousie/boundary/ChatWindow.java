@@ -48,7 +48,7 @@ public class ChatWindow extends JFrame {
             return;
         }
 
-        setTitle("💬 " + getOtherUserName());
+        setTitle(" " + getOtherUserName());
         setSize(580, 760);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -63,7 +63,7 @@ public class ChatWindow extends JFrame {
         header.setBackground(new Color(0, 122, 255));
         header.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 
-        JLabel title = new JLabel("💬 " + getOtherUserName(), SwingConstants.CENTER);
+        JLabel title = new JLabel(" " + getOtherUserName(), SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 18));
         title.setForeground(Color.WHITE);
         header.add(title, BorderLayout.CENTER);

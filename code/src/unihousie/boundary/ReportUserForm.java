@@ -75,7 +75,7 @@ public class ReportUserForm extends JFrame {
         root.add(form, BorderLayout.CENTER);
 
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton submitBtn = new JButton("🚩 Υποβολή Καταγγελίας");
+        JButton submitBtn = new JButton(" Υποβολή Καταγγελίας");
         submitBtn.setFont(submitBtn.getFont().deriveFont(Font.BOLD));
         submitBtn.addActionListener(e -> onSubmitClicked());
         JButton cancelBtn = new JButton("Ακύρωση");

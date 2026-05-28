@@ -41,7 +41,7 @@ public class InteractionController {
         }
 
         MutualMatch.createNew(likerId, targetUserId, "PENDING");
-        System.out.println("❤️ Like καταχωρήθηκε (PENDING) από " + likerId + " προς " + targetUserId);
+        System.out.println(" Like καταχωρήθηκε (PENDING) από " + likerId + " προς " + targetUserId);
     }
 
     private Optional<MutualMatch> findExistingMatch(String user1, String user2) {

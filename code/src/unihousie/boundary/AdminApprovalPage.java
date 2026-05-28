@@ -34,8 +34,8 @@ public class AdminApprovalPage extends JFrame {
         add(new JScrollPane(listingsPanel), BorderLayout.CENTER);
 
         JPanel actionPanel = new JPanel(new FlowLayout());
-        JButton approveBtn = new JButton("✅ Εγκρίνω");
-        JButton rejectBtn = new JButton("❌ Απόρριψη");
+        JButton approveBtn = new JButton(" Εγκρίνω");
+        JButton rejectBtn = new JButton(" Απόρριψη");
 
         approveBtn.addActionListener(e -> approveSelected());
         rejectBtn.addActionListener(e -> rejectSelected());

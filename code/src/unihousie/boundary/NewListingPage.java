@@ -89,7 +89,7 @@ public class NewListingPage extends JFrame {
                     "land_1", title, address, price, description, amenities, null);
 
             JOptionPane.showMessageDialog(this,
-                    "✅ Η αγγελία υποβλήθηκε επιτυχώς!\nListing ID: " + listingId + "\n\nΕκκρεμεί έγκριση από Διαχειριστή.",
+                    " Η αγγελία υποβλήθηκε επιτυχώς!\nListing ID: " + listingId + "\n\nΕκκρεμεί έγκριση από Διαχειριστή.",
                     "Επιτυχία", JOptionPane.INFORMATION_MESSAGE);
 
             clearForm();

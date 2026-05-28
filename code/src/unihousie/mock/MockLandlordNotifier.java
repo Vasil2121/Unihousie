@@ -7,7 +7,7 @@ public class MockLandlordNotifier {
     public boolean notifyNewVisitRequest(String landlordId, String visitId,
                                          String listingTitle,
                                          String dateStr, String timeStr) {
-        String console = "[MockLandlordNotifier] 🏠 Νέο αίτημα επίσκεψης" +
+        String console = "[MockLandlordNotifier]  Νέο αίτημα επίσκεψης" +
                 "\n  → Landlord: " + landlordId +
                 "\n  → Visit ID: " + visitId +
                 "\n  → Listing:  " + listingTitle +
@@ -17,7 +17,7 @@ public class MockLandlordNotifier {
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(
                     null,
-                    "<html><b>🏠 Νέο αίτημα επίσκεψης</b><br><br>"
+                    "<html><b> Νέο αίτημα επίσκεψης</b><br><br>"
                             + "Προς ιδιοκτήτη: <b>" + landlordId + "</b><br>"
                             + "Αγγελία: <i>" + listingTitle + "</i><br>"
                             + "Ημερομηνία: <b>" + dateStr + "</b><br>"

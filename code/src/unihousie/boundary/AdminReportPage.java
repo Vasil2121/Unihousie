@@ -64,9 +64,9 @@ public class AdminReportPage extends JFrame {
 
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         dismissBtn = new JButton("Απόρριψη (Dismiss)");
-        warningBtn = new JButton("⚠ Warning");
-        suspendBtn = new JButton("🚫 Suspend User");
-        deleteBtn  = new JButton("🗑 Delete Listing");
+        warningBtn = new JButton(" Warning");
+        suspendBtn = new JButton(" Suspend User");
+        deleteBtn  = new JButton(" Delete Listing");
 
         dismissBtn.addActionListener(e -> resolve(AdminReportController.ACTION_DISMISS));
         warningBtn.addActionListener(e -> resolve(AdminReportController.ACTION_WARNING));

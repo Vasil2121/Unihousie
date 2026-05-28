@@ -9,7 +9,7 @@ public class InterestController {
     public void registerInterest(String studentId, String listingId) {
         HousingListing listing = DataStore.findListing(listingId);
         if (listing == null || !HousingListing.ACTIVE.equals(listing.getStatus())) {
-            System.out.println("❌ Το ακίνητο δεν είναι διαθέσιμο.");
+            System.out.println(" Το ακίνητο δεν είναι διαθέσιμο.");
             return;
         }
 
@@ -21,6 +21,6 @@ public class InterestController {
         );
 
         DataStore.interests.add(interest);
-        System.out.println("✅ Εκδήλωση ενδιαφέροντος καταχωρήθηκε για το listing " + listingId);
+        System.out.println(" Εκδήλωση ενδιαφέροντος καταχωρήθηκε για το listing " + listingId);
     }
 }

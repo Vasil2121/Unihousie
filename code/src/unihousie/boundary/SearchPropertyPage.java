@@ -55,7 +55,7 @@ public class SearchPropertyPage extends JFrame {
             }
         });
 
-        JButton searchBtn = new JButton("🔍 Αναζήτηση");
+        JButton searchBtn = new JButton(" Αναζήτηση");
         searchBtn.setFont(new Font("Arial", Font.BOLD, 14));
         searchBtn.addActionListener(e -> performSearch());
 
